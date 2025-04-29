@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import _cli as cli
-import _matplotlib as mpl
-import _polars as pl
-import _ruff as ruff
-import _terminal as terminal
+from . import _cli as cli
+from . import _matplotlib as mpl
+from . import _polars as pl
+from . import _ruff as ruff
+from . import _terminal as terminal
 
 __all__ = ['cli', 'mpl', 'pl', 'ruff', 'terminal']

@@ -210,9 +210,9 @@ class MplTheme:
         self,
         *,
         show: bool = True,
-        color: ColorType = '.8',
+        color: ColorType = '#B0B0B0',
         ls: str = '-',
-        lw: float = 1,
+        lw: float = 0.8,
         alpha: float = 0.25,
     ) -> Self:
         self.rc.update({

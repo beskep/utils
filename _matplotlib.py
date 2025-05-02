@@ -16,7 +16,7 @@ from cmap import Colormap
 from matplotlib.legend import Legend
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Generator, Sequence
 
     import polars as pl
     from matplotlib.axes import Axes
@@ -267,9 +267,9 @@ class MplTheme:
         style = sns.axes_style(self.style)
         return context | style | self.rc
 
-    def _palette(self) -> Sequence[ColorType]:
+    def _palette(self) -> Sequence[ColorType] | None:
         if isinstance(self.palette, str):
-            return Colormap(self.palette).color_stops.color_array
+            return tuple(Colormap(self.palette).color_stops.color_array)
 
         return self.palette
 
@@ -281,9 +281,7 @@ class MplTheme:
             sns.set_palette(p)
 
     @contextmanager
-    def rc_context(
-        self, rc: dict | None = None
-    ) -> inspect.Generator[mpl.RcParams, dc.Any, None]:
+    def rc_context(self, rc: dict | None = None) -> Generator[mpl.RcParams]:
         prev = dict(mpl.rcParams.copy())
         prev.pop('backend', None)
 
@@ -389,7 +387,7 @@ def text_color(
     threshold: float = 0.25,
     dark: ColorType = 'k',
     bright: ColorType = 'w',
-) -> str:
+) -> ColorType:
     return dark if sns.utils.relative_luminance(bg_color) >= threshold else bright
 
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import functools
 from dataclasses import KW_ONLY, dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import polars as pl
 import polars.selectors as cs
@@ -203,7 +203,7 @@ class PolarsSummary:
 
         return df
 
-    def _write_string_categorical(self, wb: Workbook, **kwargs: object) -> None:
+    def _write_string_categorical(self, wb: Workbook, **kwargs: Any) -> None:
         sc = cs.string() | cs.categorical()
         if (
             not self.data.drop(self.group or [], strict=False)
@@ -273,7 +273,7 @@ class PolarsSummary:
         self,
         path: str | Path,
         column_widths: ColumnWidthsDefinition | None = 100,
-        **kwargs: object,
+        **kwargs: Any,
     ) -> None:
         kwargs['column_widths'] = column_widths
 

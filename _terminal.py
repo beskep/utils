@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import rich
 from loguru import logger
@@ -42,7 +42,7 @@ class LogHandler(RichHandler):
         *,
         rich_tracebacks: bool = False,
         remove: bool = True,
-        **kwargs: object,
+        **kwargs: Any,
     ) -> None:
         """
         `loguru.logger` 세팅.

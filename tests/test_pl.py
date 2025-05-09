@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import polars as pl
 
-import _polars
+import pl as _pl
 
 
 def test_polars_frame_cache(tmp_path):
     path = tmp_path / 'tmp.parquet'
 
-    @_polars.frame_cache(path=path, timeout='24H', loglevel='INFO')
+    @_pl.frame_cache(path=path, timeout='24H', loglevel='INFO')
     def fn():
         return pl.DataFrame()
 
@@ -33,7 +33,7 @@ def test_polars_transpose_description():
         ],
         'str': ['spam', 'egg', 'ham', 'spam'],
     }).with_columns(pl.col('decimal').cast(pl.Decimal))
-    _polars.transpose_description(data.describe())
+    _pl.transpose_description(data.describe())
 
 
 def test_polars_summary(tmp_path):
@@ -50,6 +50,6 @@ def test_polars_summary(tmp_path):
         'str': ['spam', 'egg', 'ham', 'spam'],
         'group': ['group1', 'group1', 'group2', 'group2'],
     }).with_columns(pl.col('decimal').cast(pl.Decimal))
-    summ = _polars.PolarsSummary(data, group='group')
+    summ = _pl.PolarsSummary(data, group='group')
     summ.describe()
     summ.write_excel(tmp_path / 'test.xlsx')

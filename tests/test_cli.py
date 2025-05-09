@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import _cli
+import cli
 
 
 def test_cyclopts():
-    app = _cli.App()
+    app = cli.App()
 
     @app.command
     def b():

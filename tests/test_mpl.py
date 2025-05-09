@@ -6,7 +6,7 @@ import pytest
 import seaborn as sns
 from matplotlib.figure import Figure
 
-import _matplotlib
+import mpl
 
 
 @pytest.mark.parametrize('index', [0, 1, 2])
@@ -14,13 +14,13 @@ import _matplotlib
 def test_mpl_fig_size(index, unit):
     values = [16, 9, 9 / 16]
     values[index] = None
-    fig_size = _matplotlib.MplFigSize(*values, unit=unit)
+    fig_size = mpl.MplFigSize(*values, unit=unit)
     fig_size.cm()
     fig_size.inch()
 
 
 def test_theme():
-    theme = _matplotlib.MplTheme().grid().tick()
+    theme = mpl.MplTheme().grid().tick()
     theme.rc_params()
     theme.apply()
     with theme.rc_context():
@@ -28,7 +28,7 @@ def test_theme():
 
 
 def test_concise_date():
-    _matplotlib.MplConciseDate().apply()
+    mpl.MplConciseDate().apply()
 
 
 @pytest.mark.parametrize(
@@ -42,13 +42,13 @@ def test_concise_date():
     ],
 )
 def test_col_wrap(n: int, r: int, c: int):
-    col_wrap = _matplotlib.ColWrap(n)
+    col_wrap = mpl.ColWrap(n)
     assert col_wrap.nrows == r
     assert int(col_wrap) == col_wrap.ncols == c
 
 
 def test_figure_context():
-    with _matplotlib.figure_context() as fig:
+    with mpl.figure_context() as fig:
         assert isinstance(fig, Figure)
         num = fig.number
 
@@ -62,7 +62,7 @@ def test_equal_scale(identity_line, locator):
     ax = fig.add_subplot()
     ax.plot([1, 2], [42, 42])
 
-    _matplotlib.equal_scale(ax, identity_line=identity_line, locator=locator)
+    mpl.equal_scale(ax, identity_line=identity_line, locator=locator)
 
     if locator:
         xticklabels = [t.get_text() for t in ax.xaxis.get_majorticklabels()]
@@ -71,8 +71,8 @@ def test_equal_scale(identity_line, locator):
 
 
 def test_text_color():
-    assert _matplotlib.text_color('k', 0.25, 'k', 'w') == 'w'
-    assert _matplotlib.text_color('w', 0.25, 'k', 'w') == 'k'
+    assert mpl.text_color('k', 0.25, 'k', 'w') == 'w'
+    assert mpl.text_color('w', 0.25, 'k', 'w') == 'k'
 
 
 def test_move_legend_fig_to_ax():
@@ -86,7 +86,7 @@ def test_move_legend_fig_to_ax():
         col='align',
         kind='line',
     )
-    _matplotlib.move_legend_fig_to_ax(grid.figure, grid.axes[0, 0], 'center')
+    mpl.move_legend_fig_to_ax(grid.figure, grid.axes[0, 0], 'center')
 
 
 def test_move_grid_legend():
@@ -94,7 +94,7 @@ def test_move_grid_legend():
     grid = sns.displot(
         penguins, x='flipper_length_mm', col='species', col_wrap=2, hue='sex'
     )
-    _matplotlib.move_grid_legend(grid)
+    mpl.move_grid_legend(grid)
 
 
 def test_lineplot_break_nans():
@@ -111,7 +111,5 @@ def test_lineplot_break_nans():
         .sort('timepoint', 'units')
     )
 
-    _matplotlib.lineplot_break_nans(fmri, x='timepoint', y='signal', units='units')
-    _matplotlib.lineplot_break_nans(
-        fmri.to_pandas(), x='timepoint', y='signal', units='units'
-    )
+    mpl.lineplot_break_nans(fmri, x='timepoint', y='signal', units='units')
+    mpl.lineplot_break_nans(fmri.to_pandas(), x='timepoint', y='signal', units='units')

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import _ruff
+import ruff_rules
 
 
 def test_ruff():
-    rr = _ruff.RuffRules()
+    rr = ruff_rules.RuffRules()
     rr.print_settings()
     rr.print_linters()

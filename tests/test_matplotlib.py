@@ -55,6 +55,21 @@ def test_figure_context():
     assert not plt.fignum_exists(num)
 
 
+@pytest.mark.parametrize('identity_line', [True, False, {'c': 'k'}])
+@pytest.mark.parametrize('locator', ['auto', None])
+def test_equal_scale(identity_line, locator):
+    fig = Figure()
+    ax = fig.add_subplot()
+    ax.plot([1, 2], [42, 42])
+
+    _matplotlib.equal_scale(ax, identity_line=identity_line, locator=locator)
+
+    if locator:
+        xticklabels = [t.get_text() for t in ax.xaxis.get_majorticklabels()]
+        yticklabels = [t.get_text() for t in ax.yaxis.get_majorticklabels()]
+        assert xticklabels == yticklabels
+
+
 def test_text_color():
     assert _matplotlib.text_color('k', 0.25, 'k', 'w') == 'w'
     assert _matplotlib.text_color('w', 0.25, 'k', 'w') == 'k'

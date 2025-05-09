@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses as dc
 import datetime
 import inspect
+from collections.abc import Mapping
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, ClassVar, Literal, Self, TypedDict
 
@@ -13,6 +14,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from cmap import Colormap
+from matplotlib import ticker
 from matplotlib.legend import Legend
 
 if TYPE_CHECKING:
@@ -408,6 +410,35 @@ def figure_context(*args: Any, **kwargs: Any) -> Generator[Figure]:
     fig = plt.figure(*args, **kwargs)
     yield fig
     plt.close(fig)
+
+
+def equal_scale(
+    ax: Axes,
+    *,
+    identity_line: bool | Mapping = True,
+    locator: Literal['auto'] | ticker.Locator | None = 'auto',
+) -> None:
+    ax.set_aspect('equal', adjustable='box')
+
+    ax.dataLim.update_from_data_xy(ax.dataLim.get_points()[:, ::-1], ignore=False)
+    ax.autoscale_view()
+
+    if identity_line:
+        # 1:1 line
+        if isinstance(identity_line, Mapping):
+            style = identity_line
+        else:
+            keys = ['color', 'linestyle', 'linewidth', 'alpha']
+            style = {k: mpl.rcParams[f'grid.{k}'] for k in keys}
+
+        p = ax.dataLim.get_points()[:, 0].mean()
+        ax.axline((p, p), slope=1, **style)
+
+    if locator:
+        loc = ticker.AutoLocator() if locator == 'auto' else locator
+        ax.xaxis.set_major_locator(loc)
+        ax.yaxis.set_major_locator(loc)
+        # minor locator는 무시
 
 
 def text_color(

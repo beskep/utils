@@ -38,6 +38,7 @@ __all__ = [
     'Style',
     'WidthHeight',
     'WidthHeightAspect',
+    'figure_context',
     'lineplot_break_nans',
     'move_grid_legend',
     'move_legend_fig_to_ax',
@@ -380,6 +381,33 @@ class ColWrap:
     @property
     def ncols(self) -> int:
         return self._ncols
+
+
+@contextmanager
+def figure_context(*args: Any, **kwargs: Any) -> Generator[Figure]:
+    """
+    Context manager for automatically closing a pyplot figure.
+
+    Notes
+    -----
+    `matplotlib.figure.Figure()` can be used instead.
+    - https://github.com/matplotlib/matplotlib/issues/5218
+    - https://github.com/matplotlib/matplotlib/pull/29665
+
+    Parameters
+    ----------
+    *args : Any
+    **kwargs : Any
+
+    Yields
+    ------
+    Generator[Figure]
+    """
+    import matplotlib.pyplot as plt  # noqa: PLC0415
+
+    fig = plt.figure(*args, **kwargs)
+    yield fig
+    plt.close(fig)
 
 
 def text_color(

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import matplotlib.pyplot as plt
 import polars as pl
 import pytest
 import seaborn as sns
+from matplotlib.figure import Figure
 
 import _matplotlib
 
@@ -43,6 +45,14 @@ def test_col_wrap(n: int, r: int, c: int):
     col_wrap = _matplotlib.ColWrap(n)
     assert col_wrap.nrows == r
     assert int(col_wrap) == col_wrap.ncols == c
+
+
+def test_figure_context():
+    with _matplotlib.figure_context() as fig:
+        assert isinstance(fig, Figure)
+        num = fig.number
+
+    assert not plt.fignum_exists(num)
 
 
 def test_text_color():

@@ -43,7 +43,7 @@ class FrameCache:
 
         def decorator(f: ReturnFrame) -> ReturnFrame:
             @functools.wraps(f)
-            def wrapped(*args: object, **kwargs: object) -> Frame:
+            def wrapped(*args: Any, **kwargs: Any) -> Frame:
                 if not path.exists():
                     read = False
                 else:

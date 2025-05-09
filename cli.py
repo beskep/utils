@@ -61,7 +61,7 @@ class App(cyclopts.App):
         name: str | Iterable[str] | None = ...,
         sort_key: Any = ...,  # noqa: ANN401
         name_transform: Callable[[str], str] | RemovePrefix | None = ...,
-        **kwargs: object,
+        **kwargs: Any,
     ) -> F: ...
 
     @overload
@@ -71,7 +71,7 @@ class App(cyclopts.App):
         name: str | Iterable[str] | None = ...,
         sort_key: Any = ...,  # noqa: ANN401
         name_transform: Callable[[str], str] | RemovePrefix | None = ...,
-        **kwargs: object,
+        **kwargs: Any,
     ) -> Callable[[F], F]: ...
 
     def command(
@@ -80,7 +80,7 @@ class App(cyclopts.App):
         name: str | Iterable[str] | None = None,
         sort_key: Any = REGISTERED_ORDER,
         name_transform: Callable[[str], str] | RemovePrefix | None = REMOVE_PREFIX,
-        **kwargs: object,
+        **kwargs: Any,
     ):
         if _is_helper(name):
             sort_key = None

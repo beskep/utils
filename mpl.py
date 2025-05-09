@@ -458,7 +458,7 @@ def move_legend_fig_to_ax(
     | tuple[float, float]
     | tuple[float, float, float, float]
     | None = None,
-    **kwargs: object,
+    **kwargs: Any,
 ) -> None:
     # https://github.com/mwaskom/seaborn/issues/2994
     if fig.legends:
@@ -516,7 +516,7 @@ def lineplot_break_nans(
     x: str,
     y: str,
     units: str | None = None,
-    **kwargs: object,
+    **kwargs: Any,
 ) -> None:
     """
     sns.lineplot breaking at nan.

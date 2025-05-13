@@ -453,13 +453,13 @@ def text_color(
 def move_legend_fig_to_ax(
     fig: Figure,
     ax: Axes,
-    loc: int | str,
+    loc: int | str = 'best',
     bbox_to_anchor: BboxBase
     | tuple[float, float]
     | tuple[float, float, float, float]
     | None = None,
     **kwargs: Any,
-) -> None:
+) -> Legend:
     # https://github.com/mwaskom/seaborn/issues/2994
     if fig.legends:
         old_legend = fig.legends[-1]
@@ -489,6 +489,8 @@ def move_legend_fig_to_ax(
     fig.legends = []
     new_legend = ax.legend([], [], loc=loc, bbox_to_anchor=bbox_to_anchor, **props)
     new_legend.get_children()[0].get_children().extend(old_boxes)
+
+    return new_legend
 
 
 def move_grid_legend(grid: sns.FacetGrid, loc: int | str = 'center') -> None:

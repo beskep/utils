@@ -18,11 +18,11 @@ if TYPE_CHECKING:
 
     from polars._typing import ColumnWidthsDefinition, SelectorType
 
+    type Frame = pl.DataFrame | pl.LazyFrame
+    type ReturnFrame = Callable[..., Frame]
+
 
 __all__ = ['FrameCache', 'PolarsSummary', 'frame_cache', 'transpose_description']
-
-type Frame = pl.DataFrame | pl.LazyFrame
-type ReturnFrame = Callable[..., Frame]
 
 
 class FrameCache:
@@ -228,7 +228,6 @@ class PolarsSummary:
         if self.max_string_category:
             count = count.with_columns(
                 pl.when(
-                    pl.col('variable').is_in(self.group or []).not_(),
                     pl.col('value').n_unique().over('variable')
                     > self.max_string_category,
                 )

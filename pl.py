@@ -278,11 +278,21 @@ class PolarsSummary:
 
         with Workbook(path) as wb:
             # numeric
-            if self.data.select(cs.numeric() | cs.boolean()).collect_schema().len():
+            if (
+                self.data.select(cs.numeric() | cs.boolean())
+                .drop(self.group or [], strict=False)
+                .collect_schema()
+                .len()
+            ):
                 self.describe().write_excel(wb, worksheet='numeric', **kwargs)
 
             # temporal
-            if self.data.select(cs.temporal()).collect_schema().len():
+            if (
+                self.data.select(cs.temporal())
+                .drop(self.group or [], strict=False)
+                .collect_schema()
+                .len()
+            ):
                 self.describe(selector=cs.temporal()).write_excel(
                     wb, worksheet='temporal', **kwargs
                 )

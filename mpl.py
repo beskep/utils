@@ -187,7 +187,7 @@ class MplTheme:
 
     def update(self) -> Self:
         if not isinstance(self.fig_size, MplFigSize):
-            self.fig_size = MplFigSize(*self.fig_size)  # pyright: ignore[reportArgumentType]
+            self.fig_size = MplFigSize(*self.fig_size)
         if not isinstance(self.font, MplFont):
             self.font = MplFont(**self.font)
 
@@ -493,12 +493,23 @@ def move_legend_fig_to_ax(
     return new_legend
 
 
-def move_grid_legend(grid: sns.FacetGrid, loc: int | str = 'center') -> None:
+def move_grid_legend(
+    grid: sns.FacetGrid,
+    loc: int | str = 'center',
+    *,
+    skip_if_full: bool = True,
+) -> None:
+    nrow = grid._nrow  # noqa: SLF001
+    ncol = grid._ncol  # noqa: SLF001
+
+    if skip_if_full and (grid.axes.size == nrow * ncol):
+        return
+
     figinv = grid.figure.transFigure.inverted()  # display -> figure coord
     r = [(0, 0), (1, 1)]
 
     # 오른쪽 위 ax, 마지막 ax의 figure 좌표 [[xmin, ymin], [xmax, ymax]]
-    xy0 = figinv.transform(grid.axes[grid._ncol - 1].transAxes.transform(r))  # noqa: SLF001 # pyright: ignore[reportAttributeAccessIssue]
+    xy0 = figinv.transform(grid.axes[ncol - 1].transAxes.transform(r))
     xy1 = figinv.transform(grid.axes[-1].transAxes.transform(r))
 
     # legend가 위치할 bounding box

@@ -81,7 +81,7 @@ def frame_cache(
 
 
 def transpose_description(desc: pl.DataFrame, decimals: int = 4) -> pl.DataFrame:
-    cols = ('count', 'null_count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max')
+    cols = desc['statistic']
     return (
         desc.with_columns(cs.float().round(decimals))
         .drop('statistic')

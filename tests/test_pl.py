@@ -34,7 +34,7 @@ def test_polars_transpose_description():
         ],
         'str': ['spam', 'egg', 'ham', 'spam'],
     }).with_columns(pl.col('decimal').cast(pl.Decimal))
-    _pl.transpose_description(data.describe())
+    _pl.transpose_description(data.describe(percentiles=(0.25, 0.75)))
 
 
 @pytest.mark.parametrize('group', [None, 'group'])
@@ -53,6 +53,8 @@ def test_polars_summary(group, transpose, tmp_path):
         'str': ['spam', 'egg', 'ham', 'spam'],
         'group': ['group1', 'group1', 'group2', 'group2'],
     }).with_columns(pl.col('decimal').cast(pl.Decimal))
-    summ = _pl.PolarsSummary(data, group=group, transpose=transpose)
+    summ = _pl.PolarsSummary(
+        data, group=group, percentiles=(0.25, 0.75), transpose=transpose
+    )
     summ.describe()
     summ.write_excel(tmp_path / 'test.xlsx')

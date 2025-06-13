@@ -16,10 +16,9 @@ from xlsxwriter import Workbook
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator, Sequence
 
-    from polars._typing import ColumnWidthsDefinition, SelectorType
+    from polars._typing import ColumnWidthsDefinition, QuantileMethod, SelectorType
 
-    type Frame = pl.DataFrame | pl.LazyFrame
-    type ReturnFrame = Callable[..., Frame]
+    type ReturnFrame = Callable[..., pl.DataFrame | pl.LazyFrame]
 
 
 __all__ = ['FrameCache', 'PolarsSummary', 'frame_cache', 'transpose_description']
@@ -43,7 +42,7 @@ class FrameCache:
 
         def decorator(f: ReturnFrame) -> ReturnFrame:
             @functools.wraps(f)
-            def wrapped(*args: Any, **kwargs: Any) -> Frame:
+            def wrapped(*args: Any, **kwargs: Any) -> pl.DataFrame | pl.LazyFrame:
                 if not path.exists():
                     read = False
                 else:
@@ -99,6 +98,9 @@ class PolarsSummary:
 
     _: KW_ONLY
 
+    percentiles: Sequence[float] | float | None = (0.25, 0.50, 0.75)
+    interpolation: QuantileMethod = 'nearest'
+
     transpose: bool = True
     decimals: int = 4
     max_string_category: int | None = 42
@@ -110,7 +112,9 @@ class PolarsSummary:
     def __post_init__(self) -> None:
         if self.group is not None:
             self.group = (
-                (self.group,) if isinstance(self.group, str) else tuple(self.group)
+                (self.group,)  # fmt
+                if isinstance(self.group, str)
+                else tuple(self.group)
             )
 
     def _describe(
@@ -124,7 +128,9 @@ class PolarsSummary:
             data = data.drop(self.group, strict=False)
 
         selector = cs.numeric() | cs.boolean() if selector is None else selector
-        desc = data.select(selector).describe()
+        desc = data.select(selector).describe(
+            percentiles=self.percentiles, interpolation=self.interpolation
+        )
         if self.transpose:
             desc = transpose_description(desc)
 

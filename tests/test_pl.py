@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import polars as pl
+import pytest
 
 import pl as _pl
 
@@ -36,7 +37,9 @@ def test_polars_transpose_description():
     _pl.transpose_description(data.describe())
 
 
-def test_polars_summary(tmp_path):
+@pytest.mark.parametrize('group', [None, 'group'])
+@pytest.mark.parametrize('transpose', [True, False])
+def test_polars_summary(group, transpose, tmp_path):
     data = pl.DataFrame({
         'float': [1.0, 2.0, 3.0, 42.0],
         'int': [1, 2, 3, 42],
@@ -50,6 +53,6 @@ def test_polars_summary(tmp_path):
         'str': ['spam', 'egg', 'ham', 'spam'],
         'group': ['group1', 'group1', 'group2', 'group2'],
     }).with_columns(pl.col('decimal').cast(pl.Decimal))
-    summ = _pl.PolarsSummary(data, group='group')
+    summ = _pl.PolarsSummary(data, group=group, transpose=transpose)
     summ.describe()
     summ.write_excel(tmp_path / 'test.xlsx')

@@ -509,7 +509,8 @@ def move_grid_legend(
     r = [(0, 0), (1, 1)]
 
     # 오른쪽 위 ax, 마지막 ax의 figure 좌표 [[xmin, ymin], [xmax, ymax]]
-    xy0 = figinv.transform(grid.axes[ncol - 1].transAxes.transform(r))
+    axes = grid.figure.axes
+    xy0 = figinv.transform(axes[ncol - 1].transAxes.transform(r))
     xy1 = figinv.transform(grid.axes[-1].transAxes.transform(r))
 
     # legend가 위치할 bounding box

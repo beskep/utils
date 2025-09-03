@@ -38,22 +38,22 @@ class FrameCache:
         self.loglevel = loglevel or 0
 
     def __call__(self, path: str | Path) -> Callable[..., ReturnFrame]:
-        path = Path(path)
+        p = Path(path)
 
         def decorator(f: ReturnFrame) -> ReturnFrame:
             @functools.wraps(f)
             def wrapped(*args: Any, **kwargs: Any) -> pl.DataFrame | pl.LazyFrame:
-                if not path.exists():
+                if not p.exists():
                     read = False
                 else:
-                    diff = Instant.now() - Instant.from_timestamp(path.stat().st_mtime)
+                    diff = Instant.now() - Instant.from_timestamp(p.stat().st_mtime)
                     read = diff < self.timeout
                     logger.log(self.loglevel, 'timeout={}, diff={}', self.timeout, diff)
 
                 if read:
                     # 캐시 읽기
-                    logger.log(self.loglevel, 'Read "{}"', path)
-                    return pl.scan_parquet(path, glob=False)
+                    logger.log(self.loglevel, 'Read "{}"', p)
+                    return pl.scan_parquet(p, glob=False)
 
                 # 함수 실행
                 logger.log(self.loglevel, 'Call {}', f)
@@ -61,9 +61,9 @@ class FrameCache:
 
                 # 캐시 저장
                 if isinstance(frame, pl.DataFrame):
-                    frame.write_parquet(path)
+                    frame.write_parquet(p)
                 else:
-                    frame.sink_parquet(path)
+                    frame.sink_parquet(p)
 
                 return frame
 

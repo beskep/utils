@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 import rich
 from loguru import logger
 from rich import progress
-from rich.highlighter import Highlighter, RegexHighlighter
+from rich.highlighter import RegexHighlighter
 from rich.logging import RichHandler
 from rich.text import Text
 from rich.theme import Theme
@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from logging import LogRecord
 
+    from rich.highlighter import Highlighter
     from rich.style import StyleType
     from rich.table import Column
 

@@ -12,6 +12,9 @@ mpl = ["cmap>=0.5.0", "matplotlib>=3.10.0", "pyside6>=6.9.0", "seaborn>=0.13.2"]
 cli = ["cyclopts>=3.3.1"]
 polars = ["polars>=1.20.0", "pyarrow>=20.0.0", "whenever>=0.7.3", "xlsxwriter>=3.2.1"]
 
+[tool.uv]
+default-groups = "all"
+
 [tool.ruff]
 preview = true
 output-format = "concise"
@@ -33,12 +36,10 @@ extend-safe-fixes = [
     "EM", # flake8-errmsg
     "TC", # flake8-type-checking
 ]
+future-annotations = true
 
 [tool.ruff.lint.flake8-annotations]
 allow-star-arg-any = true
-
-[tool.ruff.lint.isort]
-required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["ANN", "PLC2701", "PLR2004"]

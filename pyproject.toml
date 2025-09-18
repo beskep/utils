@@ -49,6 +49,7 @@ disable_error_code = ["import", "import-untyped"]
 
 [tool.pytest.ini_options]
 addopts = ["-v", "--doctest-modules", "--cov=.", "--cov-report", "html"]
+python_files = "_test*.py"
 
 [tool.coverage.report]
 exclude_also = [

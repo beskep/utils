@@ -18,6 +18,7 @@ class _MissingModule:
 
 if TYPE_CHECKING:
     from . import cli, mpl, pl, terminal
+    from .tqdm_rich import tqdm_rich as tqdmr
 else:
     try:
         from . import cli
@@ -39,5 +40,9 @@ else:
     except ImportError:
         terminal = _MissingModule('terminal', ['loguru', 'rich'])
 
+    try:
+        from .tqdm_rich import tqdm_rich as tqdmr
+    except ImportError:
+        tqdmr = _MissingModule('tqdm_rich', ['rich', 'tqdm'])
 
-__all__ = ['cli', 'mpl', 'pl', 'terminal']
+__all__ = ['cli', 'mpl', 'pl', 'terminal', 'tqdmr']

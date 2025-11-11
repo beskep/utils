@@ -32,7 +32,7 @@ class FrameCache:
     ) -> None:
         if isinstance(timeout, str):
             timeout = f'PT{timeout.removeprefix("PT").upper()}'
-            timeout = TimeDelta.parse_common_iso(timeout)
+            timeout = TimeDelta.parse_iso(timeout)
 
         self.timeout = timeout
         self.loglevel = loglevel or 0

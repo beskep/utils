@@ -9,9 +9,12 @@ from typing import TYPE_CHECKING, Any, TypeVar, overload
 
 import attrs
 import cyclopts
+from cyclopts.core import _result_action_converter  # noqa: PLC2701
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
+
+    from cyclopts._result_action import ResultAction, ResultActionSingle
 
 
 __all__ = [
@@ -48,6 +51,11 @@ REMOVE_PREFIX = RemovePrefix.REMOVE_PREFIX
 @attrs.define
 class App(cyclopts.App):
     _count: itertools.count = attrs.field(factory=itertools.count)
+    result_action: ResultAction | ResultActionSingle | None = attrs.field(
+        default=('call_if_callable', 'print_non_int_sys_exit'),
+        converter=_result_action_converter,
+        kw_only=True,
+    )
 
     def _remove_prefix(self, s: str) -> str:
         t = s.removeprefix(self.name[0]) if self.name else s

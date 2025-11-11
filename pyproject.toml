@@ -42,7 +42,7 @@ future-annotations = true
 allow-star-arg-any = true
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["ANN", "PLC2701", "PLR2004"]
+"tests/**" = ["ANN", "PLC2701", "PLR2004", "TID252"]
 
 [tool.mypy]
 disable_error_code = ["import", "import-untyped"]

@@ -17,8 +17,8 @@ class _MissingModule:
 
 
 if TYPE_CHECKING:
-    from . import cli, mpl, pl, terminal
-    from .tqdm_rich import tqdm_rich as tqdmr
+    from . import cli, mpl, pl, terminal  # ty: ignore[unresolved-import]
+    from .tqdm_rich import tqdm_rich as tqdmr  # ty: ignore[unresolved-import]
 else:
     try:
         from . import cli

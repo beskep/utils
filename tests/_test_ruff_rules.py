@@ -1,4 +1,4 @@
-import ruff_rules
+from .. import ruff_rules
 
 
 def test_ruff():

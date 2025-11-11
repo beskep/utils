@@ -1,8 +1,8 @@
-import cli
+from .. import cli
 
 
 def test_cyclopts():
-    app = cli.App()
+    app = cli.App(result_action='return_none')
 
     @app.command
     def b():

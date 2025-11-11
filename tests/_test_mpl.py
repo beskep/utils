@@ -4,7 +4,7 @@ import pytest
 import seaborn as sns
 from matplotlib.figure import Figure
 
-import mpl
+from .. import mpl
 
 
 @pytest.mark.parametrize('index', [0, 1, 2])
@@ -111,3 +111,7 @@ def test_lineplot_break_nans():
 
     mpl.lineplot_break_nans(fmri, x='timepoint', y='signal', units='units')
     mpl.lineplot_break_nans(fmri.to_pandas(), x='timepoint', y='signal', units='units')
+
+
+if __name__ == '__main__':
+    test_mpl_fig_size('width', 'cm')

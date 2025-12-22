@@ -97,11 +97,13 @@ def test_move_grid_legend():
 
 def test_lineplot_break_nans():
     fmri = (
-        pl.from_dataframe(sns.load_dataset('fmri'))
+        pl
+        .from_dataframe(sns.load_dataset('fmri'))
         .with_columns(units=pl.concat_str('subject', 'event', separator='-'))
         .with_row_index()
         .with_columns(
-            pl.when(pl.col('index') < 42)
+            pl
+            .when(pl.col('index') < 42)
             .then(pl.lit(None))
             .otherwise(pl.col('signal'))
             .alias('signal')

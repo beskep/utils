@@ -83,7 +83,8 @@ def frame_cache(
 def transpose_description(desc: pl.DataFrame, decimals: int = 4) -> pl.DataFrame:
     cols = desc['statistic']
     return (
-        desc.with_columns(cs.float().round(decimals))
+        desc
+        .with_columns(cs.float().round(decimals))
         .drop('statistic')
         .transpose(include_header=True, column_names=cols)
         .with_columns(pl.col(cols[:2]).cast(pl.Float64).cast(pl.UInt64))
@@ -141,7 +142,8 @@ class PolarsSummary:
     ) -> Iterator[pl.DataFrame]:
         assert isinstance(self.group, tuple)
         for name, df in (
-            self.data.lazy()
+            self.data
+            .lazy()
             .collect()
             .group_by(self.group, maintain_order=not self.sort)
         ):
@@ -171,13 +173,15 @@ class PolarsSummary:
             data = data.drop(self.group, strict=False)
 
         return (
-            data.lazy()
+            data
+            .lazy()
             .select(cs.string() | cs.categorical())
             .unpivot()
             .group_by('variable', 'value', maintain_order=True)
             .len('count')
             .with_columns(
-                pl.col('count')
+                pl
+                .col('count')
                 .truediv(pl.sum('count').over('variable'))
                 .alias('proportion')
             )
@@ -187,7 +191,8 @@ class PolarsSummary:
     def _count_string_by(self) -> Iterator[pl.DataFrame]:
         assert isinstance(self.group, tuple)
         for name, df in (
-            self.data.lazy()
+            self.data
+            .lazy()
             .collect()
             .group_by(self.group, maintain_order=not self.sort)
         ):
@@ -212,7 +217,8 @@ class PolarsSummary:
     def _write_string_categorical(self, wb: Workbook, **kwargs: Any) -> None:
         sc = cs.string() | cs.categorical()
         if (
-            not self.data.drop(self.group or [], strict=False)
+            not self.data
+            .drop(self.group or [], strict=False)
             .select(sc)
             .collect_schema()
             .len()
@@ -233,7 +239,8 @@ class PolarsSummary:
         count = self.count_string()
         if self.max_string_category:
             count = count.with_columns(
-                pl.when(
+                pl
+                .when(
                     pl.col('value').n_unique().over('variable')
                     > self.max_string_category,
                 )
@@ -243,13 +250,16 @@ class PolarsSummary:
             )
             if self.omission in count.select('value').to_series():
                 count = (
-                    count.group_by(*group, 'variable', 'value', maintain_order=True)
+                    count
+                    .group_by(*group, 'variable', 'value', maintain_order=True)
                     .agg(pl.sum('count'))
                     .with_columns(
-                        value=pl.when(pl.col('value') != self.omission)
+                        value=pl
+                        .when(pl.col('value') != self.omission)
                         .then(pl.format('"{}"', 'value'))
                         .otherwise(pl.col('value')),
-                        proportion=pl.when(pl.col('value') == self.omission)
+                        proportion=pl
+                        .when(pl.col('value') == self.omission)
                         .then(pl.lit(None))
                         .otherwise(
                             pl.col('count').truediv(pl.sum('count').over('variable'))
@@ -267,7 +277,8 @@ class PolarsSummary:
 
         if group:
             (
-                count.with_columns(pl.col(group).fill_null('Null'))
+                count
+                .with_columns(pl.col(group).fill_null('Null'))
                 .with_columns(pl.concat_str(group, separator='_').alias('__group'))
                 .pivot('__group', index=['variable', 'value'], values='count')
                 .sort('variable', 'value')
@@ -285,7 +296,8 @@ class PolarsSummary:
         with Workbook(path) as wb:
             # numeric
             if (
-                self.data.select(cs.numeric() | cs.boolean())
+                self.data
+                .select(cs.numeric() | cs.boolean())
                 .drop(self.group or [], strict=False)
                 .collect_schema()
                 .len()
@@ -294,7 +306,8 @@ class PolarsSummary:
 
             # temporal
             if (
-                self.data.select(cs.temporal())
+                self.data
+                .select(cs.temporal())
                 .drop(self.group or [], strict=False)
                 .collect_schema()
                 .len()

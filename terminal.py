@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, ClassVar
 
 import rich
-from loguru import logger
 from rich import progress
 from rich.highlighter import RegexHighlighter
 from rich.logging import RichHandler
@@ -22,6 +21,7 @@ if TYPE_CHECKING:
 
 
 __all__ = ['LogHandler', 'Progress', 'ProgressColumn', 'ProgressHighlighter']
+
 
 console = rich.get_console()
 console.push_theme(Theme({'logging.level.success': 'bold blue'}))
@@ -64,6 +64,8 @@ class LogHandler(RichHandler):
         >>> logger.success('success')  # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
               SUCCESS ...
         """
+        from loguru import logger  # noqa: PLC0415
+
         handler = cls(
             console=console,
             markup=True,

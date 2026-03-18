@@ -120,7 +120,7 @@ class PostFixColumn(ProgressColumn):
 class NoPaddingProgress(Progress):
     def make_tasks_table(self, tasks: Iterable[Task]) -> Table:
         table = super().make_tasks_table(tasks)
-        table.padding = 0  # type: ignore[assignment]
+        table.padding = (0, 0, 0, 0)
         return table
 
 
@@ -132,9 +132,9 @@ class tqdm_rich(std_tqdm):  # noqa: N801
     def __new__(cls, *_: Any, **__: Any) -> Self:
         return object.__new__(cls)
 
-    @staticmethod
-    def _get_free_pos(*_: Any, **__: Any) -> None:
-        pass
+    @classmethod
+    def _get_free_pos(cls, *_: Any, **__: Any) -> int:
+        return 0
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -149,6 +149,11 @@ class tqdm_rich(std_tqdm):  # noqa: N801
             keyword arguments for `rich.progress.Progress()`.
         bar_options : dict, optional
             keyword arguments for `rich.progress.BarColumn()`.
+
+        Examples
+        --------
+        >>> for _ in tqdm_rich(range(100)):
+        ...     pass
         """
         kwargs = kwargs.copy()
         kwargs['gui'] = True
@@ -294,7 +299,7 @@ class tqdm_rich(std_tqdm):  # noqa: N801
 
         cls._progress.console.width = d['ncols']
         cls._progress.console.height = d['nrows']
-        cls._progress.console.file = self.fp
+        cls._progress.console.file = self.fp  # ty:ignore[invalid-assignment]
 
     def refresh(self, *_: Any, **__: Any) -> None:
         self.display()

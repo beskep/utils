@@ -9,7 +9,6 @@ from subprocess import check_output
 from typing import TYPE_CHECKING, Literal
 
 import rich
-from loguru import logger
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -36,8 +35,8 @@ def find_ruff_bin() -> Path:
 def _find_ruff_bin() -> Path | Literal['ruff']:
     try:
         return find_ruff_bin()
-    except OSError as e:
-        logger.warning(str(e))
+    except OSError:
+        rich.get_console().print_exception()
 
     return 'ruff'
 

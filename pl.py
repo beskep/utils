@@ -1,15 +1,16 @@
 """polars utils."""
+# ruff: noqa: PLC0415
 
 from __future__ import annotations
 
 import functools
+import logging
 from dataclasses import KW_ONLY, dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import polars as pl
 import polars.selectors as cs
-from loguru import logger
 from whenever import Instant, TimeDelta
 from xlsxwriter import Workbook
 
@@ -24,11 +25,29 @@ if TYPE_CHECKING:
 __all__ = ['FrameCache', 'PolarsSummary', 'frame_cache', 'transpose_description']
 
 
+def get_logger() -> logging.Logger:
+    try:
+        import structlog
+
+        return structlog.stdlib.get_logger()  # type: ignore[return-value]
+    except ImportError:
+        pass
+
+    try:
+        from loguru import logger
+    except ImportError:
+        pass
+    else:
+        return logger  # type: ignore[return-value]
+
+    return logging.getLogger(__name__)
+
+
 class FrameCache:
     def __init__(
         self,
         timeout: str | TimeDelta = '24H',
-        loglevel: int | str | None = 'TRACE',
+        loglevel: int | None = 10,
     ) -> None:
         if isinstance(timeout, str):
             timeout = f'PT{timeout.removeprefix("PT").upper()}'
@@ -39,6 +58,7 @@ class FrameCache:
 
     def __call__(self, path: str | Path) -> Callable[..., ReturnFrame]:
         p = Path(path)
+        logger = get_logger()
 
         def decorator(f: ReturnFrame) -> ReturnFrame:
             @functools.wraps(f)
@@ -48,15 +68,15 @@ class FrameCache:
                 else:
                     diff = Instant.now() - Instant.from_timestamp(p.stat().st_mtime)
                     read = diff < self.timeout
-                    logger.log(self.loglevel, 'timeout={}, diff={}', self.timeout, diff)
+                    logger.log(self.loglevel, 'timeout=%s, diff=%s', self.timeout, diff)
 
                 if read:
                     # 캐시 읽기
-                    logger.log(self.loglevel, 'Read "{}"', p)
+                    logger.log(self.loglevel, 'Read "%s"', p)
                     return pl.scan_parquet(p, glob=False)
 
                 # 함수 실행
-                logger.log(self.loglevel, 'Call {}', f)
+                logger.log(self.loglevel, 'Call %s', f)
                 frame = f(*args, **kwargs)
 
                 # 캐시 저장
@@ -75,7 +95,7 @@ class FrameCache:
 def frame_cache(
     path: str | Path,
     timeout: str | TimeDelta = '24H',
-    loglevel: int | str | None = 'TRACE',
+    loglevel: int | None = None,
 ) -> Callable[..., ReturnFrame]:
     return FrameCache(timeout=timeout, loglevel=loglevel)(path=path)
 
@@ -145,7 +165,7 @@ class PolarsSummary:
             self.data
             .lazy()
             .collect()
-            .group_by(self.group, maintain_order=not self.sort)
+            .group_by(self.group, maintain_order=not self.sort)  # ty:ignore[unresolved-attribute]
         ):
             yield self._describe(df, selector=selector).select(
                 *(pl.lit(n).alias(g) for n, g in zip(name, self.group, strict=True)),
@@ -185,7 +205,7 @@ class PolarsSummary:
                 .truediv(pl.sum('count').over('variable'))
                 .alias('proportion')
             )
-            .collect()
+            .collect()  # ty:ignore[invalid-return-type]
         )
 
     def _count_string_by(self) -> Iterator[pl.DataFrame]:
@@ -194,7 +214,7 @@ class PolarsSummary:
             self.data
             .lazy()
             .collect()
-            .group_by(self.group, maintain_order=not self.sort)
+            .group_by(self.group, maintain_order=not self.sort)  # ty:ignore[unresolved-attribute]
         ):
             yield self._count_string(df).select(
                 *(pl.lit(n).alias(g) for n, g in zip(name, self.group, strict=True)),

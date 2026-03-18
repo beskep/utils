@@ -21,7 +21,7 @@ df = pl.DataFrame({
 def test_polars_frame_cache(tmp_path):
     path = tmp_path / 'tmp.parquet'
 
-    @_pl.frame_cache(path=path, timeout='24H', loglevel='INFO')
+    @_pl.frame_cache(path=path, timeout='24H', loglevel=20)
     def fn():
         return pl.DataFrame()
 

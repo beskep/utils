@@ -191,7 +191,7 @@ class MplTheme:
         if not isinstance(self.font, MplFont):
             self.font = MplFont(**self.font)
 
-        rc = {
+        rc: dict[str, object] = {
             'font.family': self.font.family,
             'font.sans-serif': self.font.sans,
             'font.serif': self.font.serif,
@@ -368,7 +368,7 @@ class ColWrap:
 
         if not (ncols := self.N2NCOLS.get(int(n), 0)):
             c = np.sqrt(n / ratio)
-            ncols = np.ceil(c) if ceil else np.round(c)
+            ncols = int(np.ceil(c) if ceil else np.round(c))
 
         self._ncols = int(ncols)
         self._nrows = int(np.ceil(n / ncols))

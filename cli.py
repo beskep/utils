@@ -89,7 +89,7 @@ class App(cyclopts.App):
         sort_key: Any = REGISTERED_ORDER,
         name_transform: Callable[[str], str] | RemovePrefix | None = REMOVE_PREFIX,
         **kwargs: Any,
-    ):
+    ):  # ty:ignore[invalid-method-override]
         if _is_helper(name):
             sort_key = None
         elif sort_key is REGISTERED_ORDER:

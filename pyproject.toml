@@ -1,40 +1,41 @@
 [project]
-name = "utils"
-version = "0.1.0"
-description = "Personal python utils"
+name            = "utils"
+version         = "0.1.0"
+description     = "Personal python utils"
 requires-python = ">=3.13"
-dependencies = []
+dependencies    = []
 
 [dependency-groups]
-dev = ["mypy>=1.14.1", "pytest>=8.3.4", "pytest-cov>=6.0.0", "ruff>=0.14.10", "ty>=0.0.1a26"]
-terminal = ["loguru>=0.7.3", "rich>=13.9.4", "tqdm>=4.67.1"]
-mpl = ["cmap>=0.5.0", "matplotlib>=3.10.0", "pyside6>=6.9.0", "seaborn>=0.13.2"]
-cli = ["cyclopts>=3.3.1"]
-polars = ["polars>=1.20.0", "pyarrow>=20.0.0", "whenever>=0.9.3", "xlsxwriter>=3.2.1"]
+dev      = ["mypy>=1.14.1", "pytest>=8.3.4", "pytest-cov>=6.0.0", "ruff>=0.14.10", "ty>=0.0.1a26"]
+cli      = ["cyclopts>=3.3.1"]
+log      = ["loguru>=0.7.3", "structlog>=25.5.0"]
+mpl      = ["cmap>=0.5.0", "matplotlib>=3.10.0", "pyside6>=6.9.0", "seaborn>=0.13.2"]
+polars   = ["polars>=1.20.0", "pyarrow>=20.0.0", "whenever>=0.9.3", "xlsxwriter>=3.2.1"]
+terminal = ["rich>=13.9.4", "tqdm>=4.67.1"]
 
 [tool.uv]
 default-groups = "all"
 
 [tool.ruff]
-preview = true
+preview       = true
 output-format = "concise"
 
 [tool.ruff.format]
-quote-style = "single"
+quote-style           = "single"
 docstring-code-format = true
 
 [tool.ruff.lint]
-select = ["ALL"]
-ignore = [
-    "COM", # flake8-commas
-    "CPY", # flake8-copyright
-    "D",   # pydocstyle
-    "Q",   # flake8-quotes
-    "S",   # flake8-bandit
+select             = ["ALL"]
+ignore             = [
+  "COM",                      # flake8-commas
+  "CPY",                      # flake8-copyright
+  "D",                        # pydocstyle
+  "Q",                        # flake8-quotes
+  "S",                        # flake8-bandit
 ]
-extend-safe-fixes = [
-    "EM", # flake8-errmsg
-    "TC", # flake8-type-checking
+extend-safe-fixes  = [
+  "EM",                       # flake8-errmsg
+  "TC",                       # flake8-type-checking
 ]
 future-annotations = true
 
@@ -52,12 +53,17 @@ disable_error_code = ["import", "import-untyped"]
 output-format = "concise"
 
 [tool.pytest.ini_options]
-addopts = ["-v", "--doctest-modules", "--cov=.", "--cov-report", "html"]
+addopts      = ["-v", "--doctest-modules", "--cov=.", "--cov-report", "html"]
 python_files = "_test*.py"
 
 [tool.coverage.report]
 exclude_also = [
-    "if __name__ == .__main__.:",
-    "if (typing\\.)?TYPE_CHECKING:",
-    "raise AssertionError",
+  "if __name__ == .__main__.:",
+  "if (typing\\.)?TYPE_CHECKING:",
+  "raise AssertionError",
 ]
+
+[tool.tombi.format.rules]
+key-value-equals-sign-alignment = true
+line-width                      = 120
+trailing-comment-alignment      = true

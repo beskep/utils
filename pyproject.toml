@@ -13,8 +13,19 @@ mpl      = ["cmap>=0.5.0", "matplotlib>=3.10.0", "pyside6>=6.9.0", "seaborn>=0.1
 polars   = ["polars>=1.20.0", "pyarrow>=20.0.0", "whenever>=0.9.3", "xlsxwriter>=3.2.1"]
 terminal = ["rich>=13.9.4", "tqdm>=4.67.1"]
 
-[tool.uv]
-default-groups = "all"
+[tool.coverage.report]
+exclude_also = [
+  "if __name__ == .__main__.:",
+  "if (typing\\.)?TYPE_CHECKING:",
+  "raise AssertionError",
+]
+
+[tool.mypy]
+disable_error_code = ["import", "import-untyped"]
+
+[tool.pytest]
+addopts      = ["--cov-report=html", "--cov=.", "--doctest-modules", "-v"]
+python_files = ["_test*.py"]
 
 [tool.ruff]
 preview       = true
@@ -45,25 +56,14 @@ allow-star-arg-any = true
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["ANN", "PLC2701", "PLR2004", "TID252"]
 
-[tool.mypy]
-disable_error_code = ["import", "import-untyped"]
+[tool.tombi.format.rules]
+key-value-equals-sign-alignment = true
+line-width                      = 120
+trailing-comment-alignment      = true
 
 [tool.ty]
 [tool.ty.terminal]
 output-format = "concise"
 
-[tool.pytest.ini_options]
-addopts      = ["-v", "--doctest-modules", "--cov=.", "--cov-report", "html"]
-python_files = "_test*.py"
-
-[tool.coverage.report]
-exclude_also = [
-  "if __name__ == .__main__.:",
-  "if (typing\\.)?TYPE_CHECKING:",
-  "raise AssertionError",
-]
-
-[tool.tombi.format.rules]
-key-value-equals-sign-alignment = true
-line-width                      = 120
-trailing-comment-alignment      = true
+[tool.uv]
+default-groups = "all"

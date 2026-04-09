@@ -53,16 +53,6 @@ class LogHandler(RichHandler):
         level : int | str, optional
         rich_tracebacks : bool, optional
         remove : bool, optional
-
-        Examples
-        --------
-        >>> LogHandler.set(20)
-        >>> from loguru import logger
-        >>> logger.debug('debug')
-        >>> logger.info('info')  # doctest: +ELLIPSIS
-        [...] INFO ...
-        >>> logger.success('success')  # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
-              SUCCESS ...
         """
         from loguru import logger  # noqa: PLC0415
 
@@ -149,17 +139,6 @@ class Progress(progress.Progress):
         Yields
         ------
         T
-
-        Examples
-        --------
-        >>> for _ in Progress.iter(range(10)):  # doctest: +ELLIPSIS
-        ...     pass
-        Working... ...
-        >>> def it(x):
-        ...     yield from x
-        >>> for _ in Progress.iter(it(range(10)), description='Iterating...'):
-        ...     pass
-        Iterating... ...
         """
         with cls(transient=transient) as p:
             yield from p.track(

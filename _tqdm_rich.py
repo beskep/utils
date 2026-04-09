@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 
 __author__ = {'github.com/': ['casperdcl']}
-__all__ = ['tqdm_rich']
+__all__ = ['tqdm', 'tqdm_rich']
 
 
 class UnitScaleColumn(ProgressColumn):
@@ -127,7 +127,7 @@ class NoPaddingProgress(Progress):
 class tqdm_rich(std_tqdm):  # noqa: N801
     """Experimental rich.progress GUI version of tqdm!"""
 
-    _progress: Progress
+    _progress: Progress | None
 
     def __new__(cls, *_: Any, **__: Any) -> Self:
         return object.__new__(cls)
@@ -273,7 +273,7 @@ class tqdm_rich(std_tqdm):  # noqa: N801
 
             if all(t.finished for t in cls._progress.tasks):
                 cls._progress.__exit__(None, None, None)
-                cls._progress = None  # type: ignore[assignment]
+                cls._progress = None
 
     def clear(self, *_: Any, **__: Any) -> None:
         pass
@@ -317,6 +317,8 @@ class tqdm_rich(std_tqdm):  # noqa: N801
             cls._progress.reset(task_id=self._task.id)  # see #1378
         super().reset(total=total)
 
+
+tqdm = tqdm_rich
 
 if __name__ == '__main__':
     import time

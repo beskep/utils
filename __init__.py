@@ -14,7 +14,7 @@ __all__ = ['cli', 'mpl', 'pl', 'terminal', 'tqdm']
 
 def __getattr__(name: str) -> ModuleType:
     if name == 'tqdm':
-        module = importlib.import_module('_tqdm_rich', __name__)
+        module = importlib.import_module('._tqdm_rich', __name__)
         return module.tqdm
 
     if name in __all__:

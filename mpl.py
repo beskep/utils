@@ -408,8 +408,11 @@ def figure_context(*args: Any, **kwargs: Any) -> Generator[Figure]:
     import matplotlib.pyplot as plt  # noqa: PLC0415
 
     fig = plt.figure(*args, **kwargs)
-    yield fig
-    plt.close(fig)
+
+    try:
+        yield fig
+    finally:
+        plt.close(fig)
 
 
 def equal_scale(

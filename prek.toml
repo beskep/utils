@@ -26,13 +26,6 @@ language = "system"
 types_or = ["python"]
 
 [[repos.hooks]]
-id       = "oxfmt"
-name     = "oxfmt"
-entry    = "oxfmt"
-language = "system"
-types_or = ["json", "yaml", "markdown"]
-
-[[repos.hooks]]
 id       = "tombi-format"
 name     = "tombi format"
 entry    = "tombi format"

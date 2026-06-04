@@ -11,13 +11,15 @@ from typing import TYPE_CHECKING, Any
 
 import polars as pl
 import polars.selectors as cs
-from whenever import Instant, TimeDelta
-from xlsxwriter import Workbook
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator, Sequence
 
+    import loguru
     from polars._typing import ColumnWidthsDefinition, QuantileMethod, SelectorType
+    from structlog.stdlib import BoundLogger
+    from whenever import TimeDelta
+    from xlsxwriter import Workbook
 
     type ReturnFrame = Callable[..., pl.DataFrame | pl.LazyFrame]
 
@@ -25,11 +27,11 @@ if TYPE_CHECKING:
 __all__ = ['FrameCache', 'PolarsSummary', 'frame_cache', 'transpose_description']
 
 
-def get_logger() -> logging.Logger:
+def get_logger() -> logging.Logger | BoundLogger | loguru.Logger:
     try:
         import structlog
 
-        return structlog.stdlib.get_logger()  # type: ignore[return-value]
+        return structlog.stdlib.get_logger()
     except ImportError:
         pass
 
@@ -38,7 +40,7 @@ def get_logger() -> logging.Logger:
     except ImportError:
         pass
     else:
-        return logger  # type: ignore[return-value]
+        return logger
 
     return logging.getLogger(__name__)
 
@@ -49,6 +51,8 @@ class FrameCache:
         timeout: str | TimeDelta = '24H',
         loglevel: int | None = 10,
     ) -> None:
+        from whenever import TimeDelta
+
         if isinstance(timeout, str):
             timeout = f'PT{timeout.removeprefix("PT").upper()}'
             timeout = TimeDelta.parse_iso(timeout)
@@ -57,6 +61,8 @@ class FrameCache:
         self.loglevel = loglevel or 0
 
     def __call__(self, path: str | Path) -> Callable[..., ReturnFrame]:
+        from whenever import Instant
+
         p = Path(path)
         logger = get_logger()
 
@@ -311,6 +317,8 @@ class PolarsSummary:
         column_widths: ColumnWidthsDefinition | None = 100,
         **kwargs: Any,
     ) -> None:
+        from xlsxwriter import Workbook
+
         kwargs['column_widths'] = column_widths
 
         with Workbook(path) as wb:

@@ -1,3 +1,4 @@
+# ruff: noqa: PLC0415
 from __future__ import annotations
 
 import dataclasses as dc
@@ -11,15 +12,14 @@ import matplotlib as mpl
 import matplotlib.dates as mdates
 import matplotlib.units as munits
 import numpy as np
-import pandas as pd
 import seaborn as sns
-from cmap import Colormap
 from matplotlib import ticker
 from matplotlib.legend import Legend
 
 if TYPE_CHECKING:
     from collections.abc import Generator, Sequence
 
+    import pandas as pd
     import polars as pl
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
@@ -271,6 +271,8 @@ class MplTheme:
         return context | style | self.rc
 
     def _palette(self) -> Sequence[ColorType] | None:
+        from cmap import Colormap
+
         if isinstance(self.palette, str):
             return tuple(Colormap(self.palette).color_stops.color_array)
 
@@ -405,7 +407,7 @@ def figure_context(*args: Any, **kwargs: Any) -> Generator[Figure]:
     ------
     Generator[Figure]
     """
-    import matplotlib.pyplot as plt  # noqa: PLC0415
+    import matplotlib.pyplot as plt
 
     fig = plt.figure(*args, **kwargs)
 
@@ -547,7 +549,8 @@ def lineplot_break_nans(
     y : str
     units : str | None, optional
     """
-    import polars as pl  # noqa: PLC0415
+    import pandas as pd
+    import polars as pl
 
     if isinstance(data, pd.DataFrame):
         data = pl.from_pandas(data)

@@ -171,7 +171,7 @@ class tqdm_rich(std_tqdm):  # noqa: N801
 
         # NOTE: temporary dummy_lock to reuse std_tqdm's __init__
         self._lock = nullcontext()
-        self._instances = [self]
+        self._instances = [self]  # ty:ignore[invalid-assignment]
         super().__init__(*args, **kwargs)
         del self._lock
         del self._instances

@@ -136,13 +136,15 @@ class PolarsSummary:
     group_prefix: str | None = 'group:'
     omission: str = '...'
 
-    def __post_init__(self) -> None:
-        if self.group is not None:
-            self.group = (
-                (self.group,)  # fmt
-                if isinstance(self.group, str)
-                else tuple(self.group)
-            )
+    @functools.cached_property
+    def _group(self) -> tuple[str, ...]:
+        match self.group:
+            case None:
+                return ()
+            case str():
+                return (self.group,)
+            case _:
+                return tuple(self.group)
 
     def _describe(
         self,
@@ -151,12 +153,13 @@ class PolarsSummary:
     ) -> pl.DataFrame:
         if data is None:
             data = self.data
-        if self.group:
-            data = data.drop(self.group, strict=False)
 
         selector = cs.numeric() | cs.boolean() if selector is None else selector
-        desc = data.select(selector).describe(
-            percentiles=self.percentiles, interpolation=self.interpolation
+        desc = (
+            data
+            .drop(self._group, strict=False)
+            .select(selector)
+            .describe(percentiles=self.percentiles, interpolation=self.interpolation)
         )
         if self.transpose:
             desc = transpose_description(desc)
@@ -166,27 +169,25 @@ class PolarsSummary:
     def _describe_by(
         self, selector: SelectorType | None = None
     ) -> Iterator[pl.DataFrame]:
-        assert isinstance(self.group, tuple)
+        assert self._group
         for name, df in (
             self.data
             .lazy()
             .collect()
-            .group_by(self.group, maintain_order=not self.sort)  # ty:ignore[unresolved-attribute]
+            .group_by(self._group, maintain_order=not self.sort)
         ):
-            yield self._describe(df, selector=selector).select(
-                *(pl.lit(n).alias(g) for n, g in zip(name, self.group, strict=True)),
-                pl.all(),
-            )
+            cols = (pl.lit(n).alias(g) for n, g in zip(name, self._group, strict=True))
+            yield self._describe(df, selector=selector).select(*cols, pl.all())
 
     def describe(self, selector: SelectorType | None = None) -> pl.DataFrame:
-        if self.group is None:
+        if not self._group:
             return self._describe(selector=selector)
 
         df = pl.concat(self._describe_by(selector), how='vertical_relaxed')
         if self.sort:
-            df = df.sort(self.group)
+            df = df.sort(self._group)
         if self.group_prefix:
-            df = df.rename({x: f'{self.group_prefix}{x}' for x in self.group})
+            df = df.rename({x: f'{self.group_prefix}{x}' for x in self._group})
 
         return df
 
@@ -195,11 +196,10 @@ class PolarsSummary:
     ) -> pl.DataFrame:
         if data is None:
             data = self.data
-        if self.group:
-            data = data.drop(self.group, strict=False)
 
         return (
             data
+            .drop(self._group, strict=False)
             .lazy()
             .select(cs.string() | cs.categorical())
             .unpivot()
@@ -211,32 +211,31 @@ class PolarsSummary:
                 .truediv(pl.sum('count').over('variable'))
                 .alias('proportion')
             )
-            .collect()  # ty:ignore[invalid-return-type]
+            .collect()
         )
 
     def _count_string_by(self) -> Iterator[pl.DataFrame]:
-        assert isinstance(self.group, tuple)
+        assert self._group
+
         for name, df in (
             self.data
             .lazy()
             .collect()
-            .group_by(self.group, maintain_order=not self.sort)  # ty:ignore[unresolved-attribute]
+            .group_by(self._group, maintain_order=not self.sort)
         ):
-            yield self._count_string(df).select(
-                *(pl.lit(n).alias(g) for n, g in zip(name, self.group, strict=True)),
-                pl.all(),
-            )
+            cols = (pl.lit(n).alias(g) for n, g in zip(name, self._group, strict=True))
+            yield (self._count_string(df).select(*cols, pl.all()))
 
     def count_string(self) -> pl.DataFrame:
-        if self.group is None:
-            df = self._count_string()
-        else:
+        if self._group:
             df = pl.concat(self._count_string_by(), how='vertical_relaxed')
+        else:
+            df = self._count_string()
 
         if self.sort:
             df = df.sort(pl.all())
-        if self.group and self.group_prefix:
-            df = df.rename({x: f'{self.group_prefix}{x}' for x in self.group})
+        if self._group and self.group_prefix:
+            df = df.rename({x: f'{self.group_prefix}{x}' for x in self._group})
 
         return df
 
@@ -244,21 +243,18 @@ class PolarsSummary:
         sc = cs.string() | cs.categorical()
         if (
             not self.data
-            .drop(self.group or [], strict=False)
+            .drop(self._group, strict=False)
             .select(sc)
             .collect_schema()
             .len()
         ):
             return
 
-        if self.group:
-            group = (
-                [f'{self.group_prefix}{x}' for x in self.group]
-                if self.group_prefix
-                else self.group
-            )
-        else:
-            group = ()
+        group = (
+            tuple(f'{self.group_prefix}{x}' for x in self._group)
+            if self.group_prefix
+            else self._group
+        )
 
         self.describe(selector=sc).write_excel(wb, worksheet='string', **kwargs)
 
@@ -326,7 +322,7 @@ class PolarsSummary:
             if (
                 self.data
                 .select(cs.numeric() | cs.boolean())
-                .drop(self.group or [], strict=False)
+                .drop(self._group, strict=False)
                 .collect_schema()
                 .len()
             ):
@@ -336,7 +332,7 @@ class PolarsSummary:
             if (
                 self.data
                 .select(cs.temporal())
-                .drop(self.group or [], strict=False)
+                .drop(self._group, strict=False)
                 .collect_schema()
                 .len()
             ):

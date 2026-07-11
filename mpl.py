@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
     from matplotlib.transforms import BboxBase
-    from matplotlib.typing import ColorType
+    from matplotlib.typing import ColorType, LegendLocType
 
 
 __all__ = [
@@ -279,7 +279,7 @@ class MplTheme:
         return self.palette
 
     def apply(self, rc: dict | None = None) -> None:
-        rc_ = self.rc_params() | (rc or {})
+        rc_: dict = self.rc_params() | (rc or {})
         mpl.rcParams.update(rc_)
 
         if (p := self._palette()) is not None:
@@ -433,8 +433,8 @@ def equal_scale(
         if isinstance(identity_line, Mapping):
             style = identity_line
         else:
-            keys = ['color', 'linestyle', 'linewidth', 'alpha']
-            style = {k: mpl.rcParams[f'grid.{k}'] for k in keys}
+            keys = ('grid.color', 'grid.linestyle', 'grid.linewidth', 'grid.alpha')
+            style = {k.removeprefix('grid.'): mpl.rcParams[k] for k in keys}
 
         p = ax.dataLim.get_points()[:, 0].mean()
         ax.axline((p, p), slope=1, **style)
@@ -458,7 +458,7 @@ def text_color(
 def move_legend_fig_to_ax(
     fig: Figure,
     ax: Axes,
-    loc: int | str = 'best',
+    loc: int | LegendLocType = 'best',
     bbox_to_anchor: BboxBase
     | tuple[float, float]
     | tuple[float, float, float, float]

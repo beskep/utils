@@ -33,7 +33,7 @@ class UnitScaleColumn(ProgressColumn):
         self.unit_divisor = unit_divisor
         super().__init__()
 
-    def unit_format(self, task: Task, num: float, fmt: str = '') -> str:  # noqa: PLR6301
+    def unit_format(self, task: Task, num: float, fmt: str = '') -> str:  # ruff:ignore[no-self-use]
         if task.fields['unit_scale']:
             return std_tqdm.format_sizeof(num, divisor=task.fields['unit_divisor'])
         return f'{num:{fmt}}'
@@ -62,7 +62,7 @@ class RateColumn(UnitScaleColumn):
         self.unit = unit
 
     def render(self, task: Task) -> Text:
-        """Show data transfer speed."""  # noqa: DOC201
+        """Show data transfer speed."""  # ruff:ignore[docstring-missing-returns]
         speed = task.fields['rate']
         if task.fields['elapsed'] and speed is None:
             speed = task.completed / task.fields['elapsed']
@@ -94,7 +94,7 @@ class UnitCompletedColumn(UnitScaleColumn):
 
 
 class CompactTimeElapsedColumn(ProgressColumn):
-    def render(self, task: Task) -> Text:  # noqa: PLR6301
+    def render(self, task: Task) -> Text:  # ruff:ignore[no-self-use]
         elapsed = task.fields['elapsed']
         formatted = std_tqdm.format_interval(int(elapsed)) if elapsed else '--:--'
         return Text(formatted, style='progress.elapsed')
@@ -112,7 +112,7 @@ class PrefixTimeRemainingColumn(TimeRemainingColumn):
 
 
 class PostFixColumn(ProgressColumn):
-    def render(self, task: Task) -> Text:  # noqa: PLR6301
+    def render(self, task: Task) -> Text:  # ruff:ignore[no-self-use]
         postfix = task.fields.get('postfix')
         return Text(f', {postfix}' if postfix else '', style='progress.percentage')
 
@@ -124,7 +124,7 @@ class NoPaddingProgress(Progress):
         return table
 
 
-class tqdm_rich(std_tqdm):  # noqa: N801
+class tqdm_rich(std_tqdm):  # ruff:ignore[invalid-class-name]
     """Experimental rich.progress GUI version of tqdm!"""
 
     _progress: Progress | None
@@ -205,7 +205,7 @@ class tqdm_rich(std_tqdm):  # noqa: N801
                 stacklevel=2,
             )
 
-        with cls._progress._lock:  # noqa: SLF001
+        with cls._progress._lock:  # ruff:ignore[private-member-access]
             # workaround to not refresh on task addition
             disable, cls._progress.disable = cls._progress.disable, True
             task_id = cls._progress.add_task(self.desc or '', **d, start=False)
@@ -261,7 +261,7 @@ class tqdm_rich(std_tqdm):  # noqa: N801
 
         if cls._progress is None or self._task is None:
             return
-        with cls._progress._lock:  # noqa: SLF001
+        with cls._progress._lock:  # ruff:ignore[private-member-access]
             if not self._task.finished:
                 cls._progress.stop_task(self._task.id)
                 self._task.finished_time = self._task.stop_time

@@ -1,4 +1,4 @@
-# ruff: noqa: PLC0415
+# ruff:file-ignore[import-outside-top-level]
 from __future__ import annotations
 
 import dataclasses as dc
@@ -504,8 +504,8 @@ def move_grid_legend(
     *,
     skip_if_full: bool = True,
 ) -> None:
-    nrow = grid._nrow  # noqa: SLF001
-    ncol = grid._ncol  # noqa: SLF001
+    nrow = grid._nrow  # ruff:ignore[private-member-access]
+    ncol = grid._ncol  # ruff:ignore[private-member-access]
 
     if skip_if_full and (grid.axes.size == nrow * ncol):
         return

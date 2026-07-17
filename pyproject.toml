@@ -54,7 +54,7 @@ future-annotations = true
 allow-star-arg-any = true
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["ANN", "PLC2701", "PLR2004", "TID252"]
+"tests/**" = ["ANN", "import-private-name", "magic-value-comparison", "relative-imports"]
 
 [tool.tombi.format.rules]
 key-value-equals-sign-alignment = true

@@ -54,7 +54,7 @@ class LogHandler(RichHandler):
         rich_tracebacks : bool, optional
         remove : bool, optional
         """
-        from loguru import logger  # noqa: PLC0415
+        from loguru import logger  # ruff:ignore[import-outside-top-level]
 
         handler = cls(
             console=console,
@@ -70,7 +70,7 @@ class LogHandler(RichHandler):
 
 
 class ProgressHighlighter(RegexHighlighter):
-    highlights = [r'(?P<dim>\d+/\d+=0*)(\d*%)']  # noqa: RUF012
+    highlights = [r'(?P<dim>\d+/\d+=0*)(\d*%)']  # ruff:ignore[mutable-class-default]
 
 
 class ProgressColumn(progress.TaskProgressColumn):

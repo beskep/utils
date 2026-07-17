@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, overload
 
 import attrs
 import cyclopts
-from cyclopts.core import _result_action_converter  # noqa: PLC2701
+from cyclopts.core import _result_action_converter  # ruff:ignore[import-private-name]
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -67,7 +67,7 @@ class App(cyclopts.App):
         self,
         obj: F,
         name: str | Iterable[str] | None = ...,
-        sort_key: Any = ...,  # noqa: ANN401
+        sort_key: Any = ...,  # ruff:ignore[any-type]
         name_transform: Callable[[str], str] | RemovePrefix | None = ...,
         **kwargs: Any,
     ) -> F: ...
@@ -77,7 +77,7 @@ class App(cyclopts.App):
         self,
         obj: None = None,
         name: str | Iterable[str] | None = ...,
-        sort_key: Any = ...,  # noqa: ANN401
+        sort_key: Any = ...,  # ruff:ignore[any-type]
         name_transform: Callable[[str], str] | RemovePrefix | None = ...,
         **kwargs: Any,
     ) -> Callable[[F], F]: ...

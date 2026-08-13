@@ -5,6 +5,7 @@ from .. import pl as _pl
 
 df = pl.DataFrame({
     'float': [1.0, 2.0, 3.0, 42.0],
+    'float2': [None, None, 4.0, 2.0],
     'int': [1, 2, 3, 42],
     'decimal': [1, 2, 3, 4],
     'temporal': [

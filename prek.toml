@@ -28,6 +28,6 @@ types_or = ["python", "pyi", "jupyter"]
 [[repos.hooks]]
 id       = "tombi-format"
 name     = "tombi format"
-entry    = "tombi format"
+entry    = "mise x -- tombi format"
 language = "system"
 files    = '\.toml$'

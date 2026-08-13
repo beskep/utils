@@ -311,13 +311,19 @@ class PolarsSummary:
         self,
         path: str | Path,
         column_widths: ColumnWidthsDefinition | None = 100,
+        wb_options: dict | None = None,
         **kwargs: Any,
     ) -> None:
         from xlsxwriter import Workbook
 
+        if wb_options is None:
+            wb_options = {}
+
+        wb_options.setdefault('nan_inf_to_errors', True)
+
         kwargs['column_widths'] = column_widths
 
-        with Workbook(path) as wb:
+        with Workbook(path, options=wb_options) as wb:
             # numeric
             if (
                 self.data

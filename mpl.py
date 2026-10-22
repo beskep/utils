@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import dataclasses as dc
-import datetime
+import datetime as dt
 import inspect
 from collections.abc import Mapping
 from contextlib import contextmanager
@@ -356,8 +356,8 @@ class MplConciseDate:
         kwargs = self.converter_kwargs()
         converter = mdates.ConciseDateConverter(**kwargs)
         munits.registry[np.datetime64] = converter
-        munits.registry[datetime.date] = converter
-        munits.registry[datetime.datetime] = converter
+        munits.registry[dt.date] = converter
+        munits.registry[dt.datetime] = converter
 
 
 class ColWrap:
@@ -504,8 +504,8 @@ def move_grid_legend(
     *,
     skip_if_full: bool = True,
 ) -> None:
-    nrow = grid._nrow  # ruff:ignore[private-member-access]
-    ncol = grid._ncol  # ruff:ignore[private-member-access]
+    nrow = getattr(grid, '_nrow', grid.axes.shape[0])
+    ncol = getattr(grid, '_ncol', grid.axes.shape[1])
 
     if skip_if_full and (grid.axes.size == nrow * ncol):
         return
@@ -566,4 +566,4 @@ def lineplot_break_nans(
     if units:
         data = data.with_columns(pl.format('{}-{}', u, units).alias(u))
 
-    sns.lineplot(data, x=x, y=y, units=u, estimator=None, **kwargs)
+    sns.lineplot(data.to_dict(), x=x, y=y, units=u, estimator=None, **kwargs)

@@ -1,3 +1,21 @@
 [tools]
 prek  = "latest"
 tombi = "latest"
+typos = "latest"
+
+[tasks]
+[tasks.format]
+run = [
+  "uvx ruff format",
+  "tombi format",
+]
+
+[tasks.lint]
+run = [
+  "uvx ruff check --fix --exit-zero",
+  "uvx ty check --fix --exit-zero",
+  "typos",
+]
+
+[tasks.check]
+run = [{ task = "format" }, { task = "lint" }]

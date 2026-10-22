@@ -52,7 +52,7 @@ REMOVE_PREFIX = RemovePrefix.REMOVE_PREFIX
 class App(cyclopts.App):
     _count: itertools.count = attrs.field(factory=itertools.count)
     result_action: ResultAction | ResultActionSingle | None = attrs.field(
-        default=('call_if_callable', 'print_non_int_sys_exit'),
+        default='call_if_callable',
         converter=_result_action_converter,
         kw_only=True,
     )

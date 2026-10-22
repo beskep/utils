@@ -126,7 +126,7 @@ class PolarsSummary:
     _: KW_ONLY
 
     percentiles: Sequence[float] | float | None = (0.25, 0.50, 0.75)
-    interpolation: QuantileMethod = 'nearest'
+    interpolation: QuantileMethod = 'linear'
 
     transpose: bool = True
     decimals: int = 4

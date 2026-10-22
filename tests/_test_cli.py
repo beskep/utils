@@ -2,7 +2,7 @@ from .. import cli
 
 
 def test_cyclopts():
-    app = cli.App(result_action='return_none')
+    app = cli.App(result_action='return_value')
 
     @app.command
     def b():

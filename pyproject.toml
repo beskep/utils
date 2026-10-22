@@ -24,8 +24,9 @@ exclude_also = [
 disable_error_code = ["import-untyped"]
 
 [tool.pytest]
-addopts      = ["--cov-report=html", "--cov=.", "--doctest-modules", "-v"]
-python_files = ["_test*.py"]
+addopts        = ["--cov-report=html", "--cov=.", "--doctest-modules", "-v"]
+filterwarnings = ["ignore:The figure layout has changed to tight:UserWarning"]
+python_files   = ["_test*.py"]
 
 [tool.ruff]
 preview       = true
@@ -36,19 +37,14 @@ quote-style           = "single"
 docstring-code-format = true
 
 [tool.ruff.lint]
-select             = ["ALL"]
-ignore             = [
-  "COM",                      # flake8-commas
-  "CPY",                      # flake8-copyright
-  "D",                        # pydocstyle
-  "Q",                        # flake8-quotes
-  "S",                        # flake8-bandit
+select = ["ALL"]
+ignore = [
+  "COM",          # flake8-commas
+  "CPY",          # flake8-copyright
+  "D",            # pydocstyle
+  "Q",            # flake8-quotes
+  "S",            # flake8-bandit
 ]
-extend-safe-fixes  = [
-  "EM",                       # flake8-errmsg
-  "TC",                       # flake8-type-checking
-]
-future-annotations = true
 
 [tool.ruff.lint.flake8-annotations]
 allow-star-arg-any = true

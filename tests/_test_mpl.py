@@ -7,12 +7,12 @@ from matplotlib.figure import Figure
 from .. import mpl
 
 
-@pytest.mark.parametrize('index', [0, 1, 2])
+@pytest.mark.parametrize('key', ['width', 'height', 'aspect'])
 @pytest.mark.parametrize('unit', ['cm', 'inch'])
-def test_mpl_fig_size(index, unit):
-    values = [16, 9, 9 / 16]
-    values[index] = None
-    fig_size = mpl.MplFigSize(*values, unit=unit)
+def test_mpl_fig_size(key, unit):
+    values = {'width': 16, 'height': 9, 'aspect': 9 / 16}
+    values[key] = None
+    fig_size = mpl.MplFigSize(**values, unit=unit)
     fig_size.cm()
     fig_size.inch()
 
@@ -113,7 +113,3 @@ def test_lineplot_break_nans():
 
     mpl.lineplot_break_nans(fmri, x='timepoint', y='signal', units='units')
     mpl.lineplot_break_nans(fmri.to_pandas(), x='timepoint', y='signal', units='units')
-
-
-if __name__ == '__main__':
-    test_mpl_fig_size('width', 'cm')

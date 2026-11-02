@@ -504,8 +504,8 @@ def move_grid_legend(
     *,
     skip_if_full: bool = True,
 ) -> None:
-    nrow = getattr(grid, '_nrow', grid.axes.shape[0])
-    ncol = getattr(grid, '_ncol', grid.axes.shape[1])
+    nrow = getattr(grid, '_nrow', 1)
+    ncol = getattr(grid, '_ncol', 1)
 
     if skip_if_full and (grid.axes.size == nrow * ncol):
         return
